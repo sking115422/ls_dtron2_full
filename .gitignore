@@ -1,7 +1,7 @@
 coco_files
 output
 coco_eval
-zip_
-*_split_
+zip
+*_split
 
 nohup.out
