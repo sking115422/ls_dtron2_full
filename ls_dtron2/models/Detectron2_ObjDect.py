@@ -179,16 +179,16 @@ def coco_train_test_split (in_dir):
         
         
         
-input_fn = "test_1"
+input_fn = "coco_prelab_743_n"
         
 coco_input_base_dir =  "./../coco_files/"
 
 update_img_refs(coco_input_base_dir + input_fn)
 coco_train_test_split(coco_input_base_dir + input_fn) 
     
-register_coco_instances("my_dataset_train", {}, "./test_1_split/train/result.json","./test_1_split/train/images")
+register_coco_instances("my_dataset_train", {}, "./" + input_fn + "_split/train/result.json","./" + input_fn + "_split/train/images")
 print("training set coco instance registered")
-register_coco_instances("my_dataset_test", {}, "./test_1_split/test/result.json","./test_1_split/test/images")
+register_coco_instances("my_dataset_test", {}, "./" + input_fn + "_split/test/result.json","./" + input_fn + "_split/test/images")
 print("test set coco instance registered")
 
 
@@ -233,7 +233,7 @@ cfg.SOLVER.STEPS = (1000, 1300, 1800)
 cfg.SOLVER.GAMMA = 0.05
 
 cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 64
-cfg.MODEL.ROI_HEADS.NUM_CLASSES = 26 #your number of classes + 1
+cfg.MODEL.ROI_HEADS.NUM_CLASSES = 32 + 1 #your number of classes + 1
 
 cfg.TEST.EVAL_PERIOD = 500
 
@@ -274,10 +274,12 @@ predictor = DefaultPredictor(cfg)
 my_dataset_train_metadata = MetadataCatalog.get("my_dataset_train")
 dataset_dicts = DatasetCatalog.get("my_dataset_test")
 
+
+
 for d in dataset_dicts:
     name = d["file_name"].split("/")[-1]
     img = cv2.imread(d["file_name"])    
-    outputs = predictor(img)
+    # outputs = predictor(img)
     visualizer = Visualizer(img[:, :, ::-1], metadata=my_dataset_train_metadata, scale=0.5)
     out = visualizer.draw_dataset_dict(d)
     cv2.imwrite("./img_out/"+name, out.get_image()[:, :, ::-1])
