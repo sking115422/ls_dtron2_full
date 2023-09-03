@@ -199,21 +199,21 @@ print("test set coco instance registered")
 
 # We are importing our own Trainer Module here to use the COCO validation evaluation during training. Otherwise no validation eval occurs.
 
-class CocoTrainer(DefaultTrainer):
+# class CocoTrainer(DefaultTrainer):
 
-  @classmethod
-  def build_evaluator(cls, cfg, dataset_name, output_folder=None):
+#   @classmethod
+#   def build_evaluator(cls, cfg, dataset_name, output_folder=None):
 
-    if output_folder is None:
-        os.makedirs("coco_eval", exist_ok=True)
-        output_folder = "coco_eval"
+#     if output_folder is None:
+#         os.makedirs("coco_eval", exist_ok=True)
+#         output_folder = "coco_eval"
 
-    return COCOEvaluator(dataset_name, cfg, False, output_folder)
+#     return COCOEvaluator(dataset_name, cfg, False, output_folder)
 
 
 # Training the model
 
-print ("model training started...")
+# print ("model training started...")
 
 cfg = get_cfg()
 cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml"))
@@ -237,25 +237,25 @@ cfg.MODEL.ROI_HEADS.NUM_CLASSES = 32 + 1 #your number of classes + 1
 cfg.TEST.EVAL_PERIOD = 500
 
 
-os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
-trainer = CocoTrainer(cfg)
-trainer.resume_or_load(resume=False)
-trainer.train()
+# os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
+# trainer = CocoTrainer(cfg)
+# trainer.resume_or_load(resume=False)
+# trainer.train()
 
 
 # Testing the model
 
-print ("model testing started...")
+# print ("model testing started...")
 
 from detectron2.data import DatasetCatalog, MetadataCatalog, build_detection_test_loader
 from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 
-cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
-cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.85
-predictor = DefaultPredictor(cfg)
-evaluator = COCOEvaluator("my_dataset_test", cfg, False, output_dir="./output/")
-val_loader = build_detection_test_loader(cfg, "my_dataset_test")
-inference_on_dataset(trainer.model, val_loader, evaluator)
+# cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
+# cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.85
+# predictor = DefaultPredictor(cfg)
+# evaluator = COCOEvaluator("my_dataset_test", cfg, False, output_dir="./output/")
+# val_loader = build_detection_test_loader(cfg, "my_dataset_test")
+# inference_on_dataset(trainer.model, val_loader, evaluator)
 
 
 ##################################################################################

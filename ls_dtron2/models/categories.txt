@@ -1,0 +1,130 @@
+    "categories": [
+        {
+            "id": 0,
+            "name": "Accept Button"
+        },
+        {
+            "id": 1,
+            "name": "Address"
+        },
+        {
+            "id": 2,
+            "name": "Address Input Box"
+        },
+        {
+            "id": 3,
+            "name": "Advertisement"
+        },
+        {
+            "id": 4,
+            "name": "Alert Notification"
+        },
+        {
+            "id": 5,
+            "name": "Allow Button"
+        },
+        {
+            "id": 6,
+            "name": "Checkbox"
+        },
+        {
+            "id": 7,
+            "name": "Click Captcha"
+        },
+        {
+            "id": 8,
+            "name": "Close Button"
+        },
+        {
+            "id": 9,
+            "name": "Download Button"
+        },
+        {
+            "id": 10,
+            "name": "Email Address"
+        },
+        {
+            "id": 11,
+            "name": "Email Input Box"
+        },
+        {
+            "id": 12,
+            "name": "General Button"
+        },
+        {
+            "id": 13,
+            "name": "General Input Box"
+        },
+        {
+            "id": 14,
+            "name": "Image Captcha"
+        },
+        {
+            "id": 15,
+            "name": "Login Button"
+        },
+        {
+            "id": 16,
+            "name": "Logo"
+        },
+        {
+            "id": 17,
+            "name": "Name"
+        },
+        {
+            "id": 18,
+            "name": "Name Input Box"
+        },
+        {
+            "id": 19,
+            "name": "Password"
+        },
+        {
+            "id": 20,
+            "name": "Password Input Box"
+        },
+        {
+            "id": 21,
+            "name": "Phone Input Box"
+        },
+        {
+            "id": 22,
+            "name": "Phone Number"
+        },
+        {
+            "id": 23,
+            "name": "Play Button"
+        },
+        {
+            "id": 24,
+            "name": "Popup"
+        },
+        {
+            "id": 25,
+            "name": "Search Button"
+        },
+        {
+            "id": 26,
+            "name": "Search Input Box"
+        },
+        {
+            "id": 27,
+            "name": "Submit Button"
+        },
+        {
+            "id": 28,
+            "name": "Text Captcha"
+        },
+        {
+            "id": 29,
+            "name": "Toggle Button"
+        },
+        {
+            "id": 30,
+            "name": "Update Button"
+        },
+        {
+            "id": 31,
+            "name": "Video"
+        }
+    ]

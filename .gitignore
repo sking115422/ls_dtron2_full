@@ -2,6 +2,8 @@ coco_files
 output
 coco_eval
 zip
+img_out
+test_inf_imgs
 *_split
 
 nohup.out
