@@ -3,6 +3,7 @@ output
 coco_eval
 old_output
 test_coco_zip
+results
 zip
 img_out
 test_inf_imgs
