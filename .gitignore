@@ -2,7 +2,6 @@ coco_files
 output
 coco_eval
 old_output
-test_coco_zip_
 test_coco_zip
 zip
 img_out
