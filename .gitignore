@@ -1,3 +1,5 @@
+coco_analyzer/*.csv
+coco_analyzer/*.txt
 coco_files
 output
 coco_eval
