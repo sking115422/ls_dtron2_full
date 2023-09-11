@@ -1,6 +1,7 @@
 coco_analyzer/*.csv
 coco_analyzer/*.txt
 coco_files
+coco_files_bal
 output
 coco_eval
 old_output
