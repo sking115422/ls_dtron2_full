@@ -181,8 +181,8 @@ def coco_train_test_split (in_dir):
         
 # Setting paths
 
-coco_input_base_dir =  "./../coco_files/"        
-input_fn = "coco_prelab_743_n"
+coco_input_base_dir =  "./../coco_files_bal/"        
+input_fn = "coco_prelab_743_n_bal"
 
 update_img_refs(coco_input_base_dir + input_fn)
 coco_train_test_split(coco_input_base_dir + input_fn) 
@@ -225,19 +225,20 @@ cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/faster_rcnn_X_1
 cfg.SOLVER.IMS_PER_BATCH = 4
 cfg.SOLVER.BASE_LR = 0.001
 
-cfg.SOLVER.MAX_ITER = 20
+### Testing
+# cfg.SOLVER.MAX_ITER = 20
 
 ### OG
-# cfg.SOLVER.WARMUP_ITERS = 1000
-# cfg.SOLVER.MAX_ITER = 3000 #adjust up if val mAP is still rising, adjust down if overfit
-# cfg.SOLVER.STEPS = (1000, 1300, 1800)
-# cfg.SOLVER.GAMMA = 0.05
+cfg.SOLVER.WARMUP_ITERS = 1000
+cfg.SOLVER.MAX_ITER = 3000 #adjust up if val mAP is still rising, adjust down if overfit
+cfg.SOLVER.STEPS = (1000, 1300, 1800)
+cfg.SOLVER.GAMMA = 0.05
 
 cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 64
 cfg.MODEL.ROI_HEADS.NUM_CLASSES = 32 + 1 #your number of classes + 1
 
 ### OG
-# cfg.TEST.EVAL_PERIOD = 500
+cfg.TEST.EVAL_PERIOD = 500
 
 
 # Training the model
@@ -335,10 +336,10 @@ print ("model inference started...")
 ### Starting inference
 
 print ("model inference started...")
-cfg.MODEL.WEIGHTS = os.path.join("./old_output/output_500", "model_final.pth")
-# cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
-#cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.70
-cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.25
+# cfg.MODEL.WEIGHTS = os.path.join("./old_output/output_500", "model_final.pth")
+cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
+cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.50
+# cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.25
 predictor = DefaultPredictor(cfg)
 
 img_path_list = os.listdir(img_in_dir)
