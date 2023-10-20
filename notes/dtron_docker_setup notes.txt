@@ -1,0 +1,67 @@
+# Creating docker container
+docker run -d -i -t -p 65111:22 --gpus all --hostname dtron2_cont --name dtron2_test ubuntu:22.04
+
+# Attaching shell
+docker exec -it dtron2_test /bin/bash
+
+# Setting up SSH server and generic user
+apt update
+apt upgrade
+apt install sudo
+sudo apt install openssh-server
+sudo service ssh start
+sudo useradd -m dtron2_user
+sudo passwd dtron2_user
+sudo usermod -aG sudo dtron2_user
+exit
+
+# Changing shell to bash (optional)
+ssh -p 65111 dtron2_user@localhost
+chsh -s /bin/bash
+exit
+ssh -p 65111 dtron2_user@localhost
+
+# Installing Miniconda
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod +x Miniconda3-latest-Linux-x86_64.sh
+./Miniconda3-latest-Linux-x86_64.sh
+exit
+ssh -p 65111 dtron2_user@localhost
+
+
+# Creating & activating venv for Detectron2
+conda create -n dtron2_venv python=3.8
+conda env list
+conda activate dtron2_venv
+
+# Install pytorch version
+https://pytorch.org/get-started/previous-versions/
+# CUDA 11.1
+pip install torch==1.10.1+cu111 torchvision==0.11.2+cu111 torchaudio==0.10.1 -f https://download.pytorch.org/whl/cu111/torch_stable.html
+
+# Install GCC (GNU Compiler Collection) 
+sudo apt install build-essential
+gcc --version
+
+# Install GIT
+sudo apt install git-all
+git --version
+
+# Install Detectron2 from GitHub or source
+https://detectron2.readthedocs.io/en/latest/tutorials/install.html
+git clone https://github.com/facebookresearch/detectron2.git
+cd detectron2
+# Find commit before error was introduced
+# Can use either git log or web interface
+# prefetch_factor > 0 issue found on GitHub
+# https://github.com/facebookresearch/detectron2/issues/5086
+git checkout 80307d2d5e06f06a8a677cc2653f23a4c56402ac
+git checkout -b sdk_dtron2
+cd ..
+python -m pip install -e detectron2
+
+# Install Open CV
+pip install opencv-python
+
+# Fix 'distutils' has no attribute 'version' error
+pip install setuptools==59.5.0

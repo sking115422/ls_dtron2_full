@@ -226,19 +226,19 @@ cfg.SOLVER.IMS_PER_BATCH = 4
 cfg.SOLVER.BASE_LR = 0.001
 
 ### Testing
-# cfg.SOLVER.MAX_ITER = 20
+cfg.SOLVER.MAX_ITER = 20
 
 ### OG
-cfg.SOLVER.WARMUP_ITERS = 1000
-cfg.SOLVER.MAX_ITER = 3000 #adjust up if val mAP is still rising, adjust down if overfit
-cfg.SOLVER.STEPS = (1000, 1300, 1800)
-cfg.SOLVER.GAMMA = 0.05
+# cfg.SOLVER.WARMUP_ITERS = 1000
+# cfg.SOLVER.MAX_ITER = 3000 #adjust up if val mAP is still rising, adjust down if overfit
+# cfg.SOLVER.STEPS = (1000, 1300, 1800)
+# cfg.SOLVER.GAMMA = 0.05
 
 cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 64
 cfg.MODEL.ROI_HEADS.NUM_CLASSES = 32 + 1 #your number of classes + 1
 
 ### OG
-cfg.TEST.EVAL_PERIOD = 500
+# cfg.TEST.EVAL_PERIOD = 500
 
 
 # Training the model
