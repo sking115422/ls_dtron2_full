@@ -63,8 +63,8 @@ git --version
 
 ### Streamlined method
 ## Install detectron2 from repo I made with stable version
-git clone https://github.com/sking115422/sdk_dtron2.git
-python -m pip install -e sdk_dtron2
+git clone https://github.com/sking115422/detectron2.git
+python -m pip install -e detectron2
 
 # Install Open CV
 pip install opencv-python
