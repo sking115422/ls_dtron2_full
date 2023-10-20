@@ -10,6 +10,8 @@
 # opencv is pre-installed on colab
 import torch, torchvision
 print(torch.__version__, torch.cuda.is_available())
+print("clearing CPU memory")
+torch.cuda.empty_cache()
 
 import gc
 #del variables
