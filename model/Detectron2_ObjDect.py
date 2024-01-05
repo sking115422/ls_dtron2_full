@@ -183,8 +183,8 @@ def coco_train_test_split (in_dir):
         
 # Setting paths
 
-coco_input_base_dir =  "./../coco_files_bal/"        
-input_fn = "coco_prelab_743_n_bal"
+coco_input_base_dir =  "/mnt/nis_lab_research/data/coco_files/"        
+input_fn = "far_rev_708_coco"
 
 update_img_refs(coco_input_base_dir + input_fn)
 coco_train_test_split(coco_input_base_dir + input_fn) 
@@ -228,19 +228,20 @@ cfg.SOLVER.IMS_PER_BATCH = 4
 cfg.SOLVER.BASE_LR = 0.001
 
 ### Testing
-cfg.SOLVER.MAX_ITER = 20
+# cfg.SOLVER.MAX_ITER = 20
 
 ### OG
-# cfg.SOLVER.WARMUP_ITERS = 1000
-# cfg.SOLVER.MAX_ITER = 3000 #adjust up if val mAP is still rising, adjust down if overfit
-# cfg.SOLVER.STEPS = (1000, 1300, 1800)
-# cfg.SOLVER.GAMMA = 0.05
+cfg.SOLVER.WARMUP_ITERS = 1000
+cfg.SOLVER.MAX_ITER = 3000 #adjust up if val mAP is still rising, adjust down if overfit
+cfg.SOLVER.STEPS = (1000, 1300, 1800)
+cfg.SOLVER.GAMMA = 0.05
 
 cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 64
-cfg.MODEL.ROI_HEADS.NUM_CLASSES = 32 + 1 #your number of classes + 1
+# cfg.MODEL.ROI_HEADS.NUM_CLASSES = 32 + 1 #your number of classes + 1
+cfg.MODEL.ROI_HEADS.NUM_CLASSES = 27 + 1 #your number of classes + 1
 
 ### OG
-# cfg.TEST.EVAL_PERIOD = 500
+cfg.TEST.EVAL_PERIOD = 500
 
 
 # Training the model
@@ -258,7 +259,7 @@ trainer.train()
 print ("model testing started...")
 
 cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
-cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.85
+cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.50
 predictor = DefaultPredictor(cfg)
 evaluator = COCOEvaluator("my_dataset_test", cfg, False, output_dir="./output/")
 val_loader = build_detection_test_loader(cfg, "my_dataset_test")
