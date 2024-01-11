@@ -10,6 +10,7 @@ import os
 import shutil
 import json
 import math
+import time
 from detectron2 import model_zoo
 from detectron2.config import get_cfg
 from detectron2.data import MetadataCatalog, DatasetCatalog, build_detection_test_loader
@@ -18,9 +19,12 @@ from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 from detectron2.utils.visualizer import Visualizer
 from detectron2.data.datasets import register_coco_instances
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"  # Adjust as per your GPU ids
+### INITIALIZATION FUNCTION ### 
 
-setup_logger()
+def initialization ():
+    print(torch.__version__, torch.cuda.is_available())
+    print("clearing GPU memory")
+    torch.cuda.empty_cache()
 
 ### FUNCTIONS FOR DATA PREPARATION AND HANDLING ###
 
@@ -171,11 +175,17 @@ def createDataDict(fn, outputs):
 
 ### MAIN FUNCTION ###
 
-def main():
+def main(args):
+    
+    rank = args[0]
+    
+    if rank == 0:
+        # Run initialization only for the primary process
+        initialization()       
         
     # Setting paths
-    coco_input_base_dir =  "/mnt/nis_lab_research/data/coco_files/"        
-    input_fn = "far_rev_708_coco"
+    coco_input_base_dir =  "/mnt/nis_lab_research/data/coco_files/bal/"        
+    input_fn = "far_shah_1247_v1_bal"
 
     update_img_refs(coco_input_base_dir + input_fn)
     coco_train_test_split(coco_input_base_dir + input_fn) 
@@ -203,14 +213,16 @@ def main():
 
     cfg.DATALOADER.NUM_WORKERS = 4
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml")
-    cfg.SOLVER.IMS_PER_BATCH = 4
+    cfg.SOLVER.IMS_PER_BATCH = 2
+
     cfg.SOLVER.BASE_LR = 0.0025  # Adjusted for faster convergence
     cfg.SOLVER.MAX_ITER = 1500  # Reduced for faster training
     cfg.SOLVER.STEPS = (500, 1000)
     cfg.SOLVER.GAMMA = 0.1  # Adjusted for faster learning rate decay
 
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 64
-    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 28  # Adjusted class count
+    # cfg.MODEL.ROI_HEADS.NUM_CLASSES = 27 + 1  # Your number of classes + 1
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 27
     cfg.TEST.EVAL_PERIOD = 250  # More frequent evaluation
 
     # Train the Model
@@ -218,50 +230,12 @@ def main():
     trainer.resume_or_load(resume=False)
     trainer.train()
 
-    ### INFERENCE WITH D2 SAVED WEIGHTS ###
-
-    # File paths
-    img_out_dir = "./img_out/"
-    img_in_dir = "./" + input_fn + "_split/test/images/"
-    results_dir = "./results"
-
-    if not os.path.exists(img_out_dir):
-        os.makedirs(img_out_dir)
-        
-    if not os.path.exists(img_in_dir):
-        os.makedirs(img_in_dir)
-        
-    if not os.path.exists(results_dir):
-        os.makedirs(results_dir)
-
-    print("model inference started...")
-
-    # Starting inference
-    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.50
-    predictor = DefaultPredictor(cfg)
-
-    img_path_list = os.listdir(img_in_dir)
-
-    master_dict = []
-
-    for img_path in img_path_list:
-        img = cv2.imread(img_in_dir + img_path)
-        outputs = predictor(img)
-        if outputs["instances"].__len__() > 0:
-            print(outputs)
-            data_dict = createDataDict(img_in_dir + img_path, outputs)
-            vis = Visualizer(img[:, :, ::-1], scale=1)
-            out = vis.draw_dataset_dict(data_dict)
-            cv2.imwrite("./img_out/"+img_path, out.get_image()[:, :, ::-1])
-            master_dict.append(data_dict)
-            with open("./results/data_dict.json", "w+") as f:
-                f.write(json.dumps(master_dict))
-        else:
-            print("model inference has detected no elements of interest... so img will be skipped.")
-
-
 if __name__ == "__main__":
+    
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"  # Adjust as per your GPU ids
+    setup_logger()
+    
+    args = (0, )  # 0 is the rank for a single machine
     
     launch(
         main,
@@ -269,7 +243,7 @@ if __name__ == "__main__":
         num_machines=1,
         machine_rank=0,
         dist_url="tcp://127.0.0.1:65535",  # Random port; ensure it's free
-        args=(),
+        args=(args,)
     )
 
 
