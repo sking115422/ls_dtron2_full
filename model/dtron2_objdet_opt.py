@@ -189,6 +189,7 @@ def main(input_fn):
 
     # Model Configuration Adjustments for Faster Training
     cfg = get_cfg()
+    
     cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml"))
     cfg.DATASETS.TRAIN = ("my_dataset_train",)
     cfg.DATASETS.TEST = ("my_dataset_test",)
@@ -206,6 +207,8 @@ def main(input_fn):
     # cfg.MODEL.ROI_HEADS.NUM_CLASSES = 27 + 1  # Your number of classes + 1
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 27
     cfg.TEST.EVAL_PERIOD = 250  # More frequent evaluation
+    
+    ### Looking into balancing the class weights or using focal loss function instead ###
 
     # Train the Model
     trainer = CocoTrainer(cfg)
@@ -221,11 +224,9 @@ if __name__ == "__main__":
     
     setup_logger()
     
-    args = (0, )  # 0 is the rank for a single machine
-    
     # Setting paths
     coco_input_base_dir =  "/mnt/nis_lab_research/data/coco_files/aug/"        
-    input_fn = "far_shah_1247_v1_aug_ds"
+    input_fn = "far_shah_1247_v1_all_aug_att"
 
     # update_img_refs(coco_input_base_dir + input_fn)
     coco_train_test_split(coco_input_base_dir + input_fn) 
