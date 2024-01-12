@@ -33,29 +33,32 @@ def createDataDict (fn, outputs):
     img_shape = list(outputs["instances"].image_size)
     img_h = int(img_shape[0])
     img_w = int(img_shape[1])
+    ann_list = []
 
     class_list = get_soi(outputs["instances"].pred_classes, "[", "]").split(",")
-    class_list_new = []
-    for each in class_list:
-        if each.strip().isdigit():
-            class_list_new.append(int(each.strip()))
-        else:
-            print(f"Invalid class ID: {each}")
+    
+    if class_list[0] != "":
 
-    bbox_list = get_soi(outputs["instances"].pred_boxes, "[[", "]]").split("]")
-    bbox_list_new = []
-    for each in bbox_list:
-        bbox = re.sub("['[,\n]", "", each).split(" ")
-        bbox_new = []
-        for item in bbox:
-            if item != "":
-                bbox_new.append(float(item))
-        bbox_list_new.append(bbox_new)
+        class_list_new = []
+        for each in class_list:
+            if each.strip().isdigit():
+                class_list_new.append(int(each.strip()))
+            else:
+                print(f"Invalid class ID: {each}")
 
-    ann_list = []
-    for i in range(0, len(class_list)):
-        # og was "bbox_mode": "<BoxMode.XYWH_ABS: 1>"
-        ann_list.append({"iscrowd": 0, "bbox": bbox_list_new[i], "category_id": class_list_new[i], "bbox_mode": 0})
+        bbox_list = get_soi(outputs["instances"].pred_boxes, "[[", "]]").split("]")
+        bbox_list_new = []
+        for each in bbox_list:
+            bbox = re.sub("['[,\n]", "", each).split(" ")
+            bbox_new = []
+            for item in bbox:
+                if item != "":
+                    bbox_new.append(float(item))
+            bbox_list_new.append(bbox_new)
+
+        for i in range(0, len(class_list)):
+            # og was "bbox_mode": "<BoxMode.XYWH_ABS: 1>"
+            ann_list.append({"iscrowd": 0, "bbox": bbox_list_new[i], "category_id": class_list_new[i], "bbox_mode": 0})
     
     data_dict = {
         "file_name": fn,
@@ -78,6 +81,7 @@ def inference_on_gpu(gpu_id, img_paths, cfg):
         # Creating master dictionary of detected elements
         img = cv2.imread(img_path)
         outputs = predictor(img)
+        
         data_dict = createDataDict(img_path, outputs)
         master_dict.append(data_dict)
         
@@ -89,9 +93,9 @@ def inference_on_gpu(gpu_id, img_paths, cfg):
             output_filename = os.path.join(img_out_dir, os.path.basename(img_path))
             cv2.imwrite(output_filename, out.get_image()[:, :, ::-1])
             
-            # Save the results
-            with open(os.path.join(results_dir, "tmp", f"data_dict_{gpu_id}.json"), "w+") as f:
-                f.write(json.dumps(master_dict))
+    # Save the results
+    with open(os.path.join(results_dir, "tmp", f"data_dict_{gpu_id}.json"), "w+") as f:
+        f.write(json.dumps(master_dict))
 
 
 def split_processing(img_path_list, cfg):
@@ -134,6 +138,7 @@ def main():
     # Save the results
     with open(os.path.join(results_dir, "data_dict.json"), "w+") as f:
         f.write(json.dumps(res_list))
+    print("Total images processed:", len(res_list))
     print("Inference completed.")
     
     # Clean up tmp directory
@@ -158,7 +163,7 @@ if __name__ == '__main__':
     # Paths
     img_out_dir = "./img_out/"
     # img_in_dir = "/home/dtron2_user/ls_dtron2_full/model/far_rev_708_coco_bal_split/test/images/"
-    img_in_dir = "/home/dtron2_user/ls_dtron2_full/model/far_shah_1247_v1_bal_split/test/images/"
+    img_in_dir = "/home/dtron2_user/ls_dtron2_full/model/far_shah_1247_v1_aug_ds_split/test/images/"
     results_dir = "./results/"
     os.makedirs(img_out_dir, exist_ok=True)
     os.makedirs(results_dir, exist_ok=True)

@@ -123,7 +123,7 @@ def coco_train_test_split(in_dir):
         print("creating " + str(train_split) + " train test split to path: " + out_dir)
         
     else:
-        print("file " + out_dir + " already exists!")
+        print("directory: " + out_dir + " already exists!")
         
 def get_soi(str1, start_char, end_char):
     str1 = str(str1)
@@ -225,7 +225,7 @@ if __name__ == "__main__":
     
     # Setting paths
     coco_input_base_dir =  "/mnt/nis_lab_research/data/coco_files/aug/"        
-    input_fn = "far_shah_1247_v1_aug"
+    input_fn = "far_shah_1247_v1_aug_ds"
 
     # update_img_refs(coco_input_base_dir + input_fn)
     coco_train_test_split(coco_input_base_dir + input_fn) 
