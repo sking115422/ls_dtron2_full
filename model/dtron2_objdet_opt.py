@@ -205,7 +205,8 @@ def main(input_fn):
 
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 64
     # cfg.MODEL.ROI_HEADS.NUM_CLASSES = 27 + 1  # Your number of classes + 1
-    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 27
+    # cfg.MODEL.ROI_HEADS.NUM_CLASSES = 27 # OG Obj Det Idea with 27 classes
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
     cfg.TEST.EVAL_PERIOD = 250  # More frequent evaluation
     
     ### Looking into balancing the class weights or using focal loss function instead ###
@@ -226,7 +227,7 @@ if __name__ == "__main__":
     
     # Setting paths
     coco_input_base_dir =  "/mnt/nis_lab_research/data/coco_files/aug/"        
-    input_fn = "far_shah_1247_v1_all_aug_att"
+    input_fn = "far_shah-b1-b2_cln_EOI_aug_all"
 
     # update_img_refs(coco_input_base_dir + input_fn)
     coco_train_test_split(coco_input_base_dir + input_fn) 

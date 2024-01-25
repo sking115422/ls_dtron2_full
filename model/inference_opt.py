@@ -158,14 +158,15 @@ if __name__ == '__main__':
     setup_logger()
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml"))
+    # cfg.MODEL.WEIGHTS = os.path.join("/home/dtron2_user/ls_dtron2_full/model/output", "model_final.pth")
     cfg.MODEL.WEIGHTS = os.path.join("/home/dtron2_user/ls_dtron2_full/model/output", "model_final.pth")
-    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 27
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.50
 
     # Paths
     img_out_dir = "./img_out/"
     # img_in_dir = "/home/dtron2_user/ls_dtron2_full/model/far_rev_708_coco_bal_split/test/images/"
-    img_in_dir = "/home/dtron2_user/ls_dtron2_full/model/far_shah_1247_v1_all_aug_att_split/test/images"
+    img_in_dir = "/home/dtron2_user/ls_dtron2_full/model/far_shah-b1-b2_cln_EOI_aug_all_split/test/images"
     results_dir = "./results/"
     os.makedirs(img_out_dir, exist_ok=True)
     os.makedirs(results_dir, exist_ok=True)
