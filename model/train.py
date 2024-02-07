@@ -19,6 +19,8 @@ from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 from detectron2.utils.visualizer import Visualizer
 from detectron2.data.datasets import register_coco_instances
 
+# os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'max_split_size_mb:2560'
+
 ### FUNCTIONS FOR DATA PREPARATION AND HANDLING ###
 
 def update_img_refs(in_dir):
@@ -218,7 +220,7 @@ def main(input_fn):
 
 if __name__ == "__main__":
     
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"  # Adjust as per your GPU ids
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1"  # Adjust as per your GPU ids
     print(torch.__version__, torch.cuda.is_available())
     print("clearing GPU memory")
     torch.cuda.empty_cache()
@@ -226,8 +228,8 @@ if __name__ == "__main__":
     setup_logger()
     
     # Setting paths
-    coco_input_base_dir =  "/mnt/nis_lab_research/data/coco_files/aug/"        
-    input_fn = "far_shah-b1-b2_cln_EOI_aug_all"
+    coco_input_base_dir =  "/mnt/nis_lab_research/data/coco_files/eoi/"        
+    input_fn = "far_shah_b1-b3_EOI"
 
     # update_img_refs(coco_input_base_dir + input_fn)
     coco_train_test_split(coco_input_base_dir + input_fn) 

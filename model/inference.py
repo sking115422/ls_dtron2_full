@@ -166,7 +166,7 @@ if __name__ == '__main__':
     # Paths
     img_out_dir = "./img_out/"
     # img_in_dir = "/home/dtron2_user/ls_dtron2_full/model/far_rev_708_coco_bal_split/test/images/"
-    img_in_dir = "/home/dtron2_user/ls_dtron2_full/model/far_shah-b1-b2_cln_EOI_aug_all_split/test/images"
+    img_in_dir = "/home/dtron2_user/ls_dtron2_full/model/far_shah_b1-b3_EOI_aug_all_split/test/images"
     results_dir = "./results/"
     os.makedirs(img_out_dir, exist_ok=True)
     os.makedirs(results_dir, exist_ok=True)
