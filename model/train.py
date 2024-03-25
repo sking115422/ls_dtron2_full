@@ -229,7 +229,7 @@ if __name__ == "__main__":
     
     # Setting paths
     coco_input_base_dir =  "/mnt/nis_lab_research/data/coco_files/eoi/"        
-    input_fn = "far_shah_b1-b3_EOI"
+    input_fn = "far_shah_b1-b5_b8_train_EOI"
 
     # update_img_refs(coco_input_base_dir + input_fn)
     coco_train_test_split(coco_input_base_dir + input_fn) 
