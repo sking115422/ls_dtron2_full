@@ -170,13 +170,13 @@ def createDataDict(fn, outputs):
 
 ### MAIN FUNCTION ###
 
-def main(input_fn):
+def main(input_fn, output_dir, it):
     
     # Registering COCO instances
     
-    register_coco_instances("my_dataset_train", {}, "./" + input_fn + "_split/train/result.json", "./" + input_fn + "_split/train/images")
+    register_coco_instances(f"train_set_{it}", {}, "./" + input_fn + "_split/train/result.json", "./" + input_fn + "_split/train/images")
     print("training set coco instance registered")
-    register_coco_instances("my_dataset_test", {}, "./" + input_fn + "_split/test/result.json", "./" + input_fn + "_split/test/images")
+    register_coco_instances(f"test_set_{it}", {}, "./" + input_fn + "_split/test/result.json", "./" + input_fn + "_split/test/images")
     print("test set coco instance registered")
     
     ### TRAIN CUSTOM D2 DETECTOR ###
@@ -185,20 +185,21 @@ def main(input_fn):
         @classmethod
         def build_evaluator(cls, cfg, dataset_name, output_folder=None):
             if output_folder is None:
-                os.makedirs("coco_eval", exist_ok=True)
-                output_folder = "coco_eval"
+                output_folder = os.path.join(output_dir, "coco_eval")
+                os.makedirs(output_folder, exist_ok=True)
             return COCOEvaluator(dataset_name, cfg, False, output_folder)
 
     # Model Configuration Adjustments for Faster Training
     cfg = get_cfg()
     
     cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml"))
-    cfg.DATASETS.TRAIN = ("my_dataset_train",)
-    cfg.DATASETS.TEST = ("my_dataset_test",)
+    cfg.DATASETS.TRAIN = (f"train_set_{it}",)
+    cfg.DATASETS.TEST = (f"test_set_{it}",)
+    cfg.OUTPUT_DIR = output_dir
 
     cfg.DATALOADER.NUM_WORKERS = 22
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml")
-    cfg.SOLVER.IMS_PER_BATCH = 10
+    cfg.SOLVER.IMS_PER_BATCH = 4
 
     cfg.SOLVER.BASE_LR = 0.0025  # Adjusted for faster convergence
     cfg.SOLVER.MAX_ITER = 1500  # Reduced for faster training
@@ -220,27 +221,38 @@ def main(input_fn):
 
 if __name__ == "__main__":
     
-    os.environ["CUDA_VISIBLE_DEVICES"] = "2, 3"  # Adjust as per your GPU ids
+    # os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # Adjust as per your GPU ids
     print(torch.__version__, torch.cuda.is_available())
+    torch.cuda.set_device(0)
     print("clearing GPU memory")
     torch.cuda.empty_cache()
     
     setup_logger()
     
-    # Setting paths
-    coco_input_base_dir =  "/mnt/nis_lab_research/data/coco_files/agg/class_1/"        
-    input_fn = "far_shah_b1-b5_b8_train_c0"
-
-    # update_img_refs(coco_input_base_dir + input_fn)
-    coco_train_test_split(coco_input_base_dir + input_fn) 
+    # Setting the base directory
+    coco_input_base_dir = "/mnt/nis_lab_research/data/coco_files/agg/class_2_rem"
     
-    launch(
-        main,
-        num_gpus_per_machine=2,  # Number of GPUs
-        num_machines=1,
-        machine_rank=0,
-        dist_url="tcp://127.0.0.1:65535",  # Random port; ensure it's free
-        args=(input_fn,)
-    )
+    # Iterate through each subdirectory in the base directory
+    for i, in_dir in enumerate(sorted(os.listdir(coco_input_base_dir))):
+        
+        sub_dir_path = os.path.join(coco_input_base_dir, in_dir)
+        print(f"Training on dataset located in {sub_dir_path}")
+
+        output_dir = os.path.join("./out", f"{i}__{in_dir}")
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Uncomment if update_img_refs is needed
+        # update_img_refs(os.path.join(sub_dir_path, input_fn))
+
+        coco_train_test_split(sub_dir_path)
+        
+        launch(
+            main,
+            num_gpus_per_machine=1,  # Number of GPUs
+            num_machines=1,
+            machine_rank=0,
+            dist_url="tcp://127.0.0.1:65535",  # Random port; ensure it's free
+            args=(in_dir, output_dir, i)
+        )
 
 

@@ -158,14 +158,15 @@ if __name__ == '__main__':
     setup_logger()
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml"))
-    cfg.MODEL.WEIGHTS = os.path.join("/home/dtron2_user/ls_dtron2_full/model/output", "model_final.pth")
+    # cfg.MODEL.WEIGHTS = os.path.join("/home/dtron2_user/ls_dtron2_full/model/output", "model_final.pth")
     # cfg.MODEL.WEIGHTS = "/mnt/nis_lab_research/data/coco_files/eoi/far_shah_b1-b3_EOI/output/model_final.pth"
+    cfg.MODEL.WEIGHTS = os.path.join("/home/dtron2_user/ls_dtron2_full/model/out/1__c1", "model_final.pth")
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.95
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.50
 
     # Paths
     img_out_dir = "./img_out/"
-    img_in_dir = "/home/dtron2_user/ls_dtron2_full/model/far_shah_b1-b5_b8_train_EOI_split/test/images"
+    img_in_dir = "/home/dtron2_user/ls_dtron2_full/model/c1_split/test/images"
     # img_in_dir = "/mnt/nis_lab_research/data/se_test"
     results_dir = "./results/"
     os.makedirs(img_out_dir, exist_ok=True)
